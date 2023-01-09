@@ -31,7 +31,7 @@ loss_fns = {
 
 FLAGS = flags.FLAGS
 # model and training
-flags.DEFINE_enum('dataset', 'cifar10', ['cifar10', 'stl10'], "dataset")
+flags.DEFINE_enum('dataset', 'cifar10', ['cifar10', 'stl10', 'SOFC'], "dataset")
 flags.DEFINE_enum('arch', 'cnn32', net_G_models.keys(), "architecture")
 flags.DEFINE_integer('total_steps', 50000, "total number of training steps")
 flags.DEFINE_integer('batch_size', 128, "batch size")
@@ -97,6 +97,12 @@ def train():
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                
+     if FLAGS.dataset == 'SOFC':
+         dataset = dataset.SOFC(
+             './data', train=True, transform=transforms.Compose([
+                 transforms.Grayscale(num_output_channels=1),
+                 transforms.ToTensor() 
             ]))
 
     dataloader = torch.utils.data.DataLoader(
